@@ -1,3 +1,4 @@
+import patchUserRelationship from '../../hooks/patch-user-relationship'
 
 export default {
   before: {
@@ -6,7 +7,7 @@ export default {
     get: [],
     create: [],
     update: [],
-    patch: [],
+    patch: [patchUserRelationship],
     remove: []
   },
 

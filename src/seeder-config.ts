@@ -113,14 +113,13 @@ module.exports = {
     },
     {
       disabled: disabled,
-      
+
       path: 'user-relationship-type',
       randomize: false,
-      templates:
-        [
-          { name: 'requested' }, // Default state of relatedUser
-          { name: 'friend' },
-          { name: 'blocked' }
+      templates: [
+          { type: 'requested' }, // Default state of relatedUser
+          { type: 'friend' },
+          { type: 'blocked' }
         ]
     },
     {
@@ -129,10 +128,10 @@ module.exports = {
       path: 'user-role',
       templates:
         [
-          { name: 'admin' },
-          { name: 'moderator' },
-          { name: 'user' },
-          { name: 'guest' }
+          { role: 'admin' },
+          { role: 'moderator' },
+          { role: 'user' },
+          { role: 'guest' }
         ]
     },
     {
@@ -141,9 +140,9 @@ module.exports = {
       path: 'organization-user-rank',
       templates:
         [
-          { name: 'principal' },
-          { name: 'teacer' },
-          { name: 'student' }
+          { rank: 'principal' },
+          { rank: 'teacer' },
+          { rank: 'student' }
         ]
     },
     {
@@ -153,27 +152,27 @@ module.exports = {
       randomize: false,
       templates:
         [
-          { name: 'accessControlScope' },
-          { name: 'accessControl' },
-          { name: 'attribution' },
-          { name: 'collection' },
-          { name: 'collectionType' },
-          { name: 'component' },
-          { name: 'componentType' },
-          { name: 'entity' },
-          { name: 'entityType' },
-          { name: 'group' },
-          { name: 'group-user' },
-          { name: 'instance' },
-          { name: 'license' },
-          { name: 'location' },
-          { name: 'location-user' },
-          { name: 'organization' },
-          { name: 'resourceType' },
-          { name: 'userRole' },
-          { name: 'staticResource' },
-          { name: 'staticResourceType' },
-          { name: 'user' }
+          { type: 'accessControlScope' },
+          { type: 'accessControl' },
+          { type: 'attribution' },
+          { type: 'collection' },
+          { type: 'collectionType' },
+          { type: 'component' },
+          { type: 'componentType' },
+          { type: 'entity' },
+          { type: 'entityType' },
+          { type: 'group' },
+          { type: 'group-user' },
+          { type: 'instance' },
+          { type: 'license' },
+          { type: 'location' },
+          { type: 'location-user' },
+          { type: 'organization' },
+          { type: 'resourceType' },
+          { type: 'userRole' },
+          { type: 'staticResource' },
+          { type: 'staticResourceType' },
+          { type: 'user' }
         ]
     },
     {

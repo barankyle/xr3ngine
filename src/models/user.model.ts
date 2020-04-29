@@ -47,7 +47,7 @@ export default (app: Application): any => {
     (user as any).hasMany(models.collection);
     (user as any).hasMany(models.entity);
     (user as any).hasMany(models.static_resource);
-    (user as any).belongsToMany(models.user, { as: 'user', through: models.user_relationship });
+    // (user as any).belongsToMany(models.user, { as: 'user', through: models.user_relationship });
     (user as any).belongsToMany(models.user, { as: 'relatedUser', through: models.user_relationship });
     (user as any).belongsToMany(models.organization, { through: models.organization_user }); // user can join multiple orgs
     (user as any).belongsToMany(models.organization_user_rank, { through: models.organization_user }); // user can join multiple orgs
