@@ -11,12 +11,13 @@ import AWS from 'aws-sdk'
 import S3BlobStore from 's3-blob-store'
 import { Application } from '../declarations'
 import StorageProvider from '../storage/storageprovider'
-import createStaticResource from '../hooks/create-static-resource'
+import createStaticResource from './create-static-resource'
 
 import fs from 'fs'
 import _ from 'lodash'
 // @ts-ignore
 import appRootPath from 'app-root-path'
+import uploadThumbnailLinkHook from './upload-thumbnail-link'
 
 const promiseExec = util.promisify(exec)
 
@@ -71,6 +72,17 @@ export default async (context: any): Promise<void> => {
   }
 
   if (fileId.length > 0) {
+    var thumbnailUploadResult: any
+
+    context.params.storageProvider = new StorageProvider()
+    context.params.uploadPath = path.join('public', context.params.videoSource, fileId, 'video')
+
+    if (context.data.metadata.thumbnail_url != null) {
+      let localContext = _.cloneDeep(context)
+      thumbnailUploadResult = await uploadThumbnailLinkHook()(localContext)
+      context.params.thumbnailUrl = thumbnailUploadResult.params.thumbnailUrl
+    }
+
     const s3Key = path.join('public', context.params.videoSource, fileId, 'video', dashManifestName)
     s3BlobStore.exists({
       key: (s3Key)
@@ -104,6 +116,31 @@ export default async (context: any): Promise<void> => {
                 resolve()
               })
           })
+
+          if (context.data.metadata.thumbnail_url == null) {
+            console.log('Getting thumbnail from youtube-dl')
+
+            const thumbnailUrlResult = await new Promise((resolve, reject) => {
+              youtubedl.exec(url,
+                  ['--get-thumbnail'],
+                  { cwd: localFilePath },
+                  (err: any, output: any) => {
+                    if (err) {
+                      console.log(err)
+                      reject(err)
+                    }
+                    resolve(output)
+                  })
+            })
+
+            console.log('Got thumbnail from yt-dl: ' + thumbnailUrlResult)
+
+            context.data.metadata.thumbnail_url = context.result.metadata.thumbnail_url = (thumbnailUrlResult as any)[0]
+
+            thumbnailUploadResult = await uploadThumbnailLinkHook()(context)
+
+            context.data.metadata.thumbnail_url = thumbnailUploadResult.params.thumbnailUrl
+          }
 
           console.log('Finished downloading video ' + fileId + ', running through ffmpeg')
 
@@ -157,6 +194,36 @@ export default async (context: any): Promise<void> => {
           })
         })
 
+        if (context.data.metadata.thumbnail_url == null) {
+          console.log('Getting thumbnail from youtube-dl')
+          const localFilePath = path.join(appRootPath.path, 'temp_videos', fileId)
+          context.params.storageProvider = new StorageProvider()
+          context.params.uploadPath = s3Path
+
+          const thumbnailUrlResult = await new Promise((resolve, reject) => {
+            console.log('exec youtube-dl')
+            youtubedl.exec(url,
+                ['--get-thumbnail'],
+                {cwd: localFilePath},
+                (err: any, output: any) => {
+                  if (err) {
+                    console.log(err)
+                    reject(err)
+                  }
+                  resolve(output)
+                })
+          })
+
+          context.data.metadata.thumbnail_url = context.result.metadata.thumbnail_url = (thumbnailUrlResult as any)[0]
+
+          thumbnailUploadResult = await uploadThumbnailLinkHook()(context)
+
+          context.data.metadata.thumbnail_url = thumbnailUploadResult.params.thumbnailUrl
+        }
+        else {
+          context.data.metadata.thumbnail_url = context.params.thumbnailUrl as any
+        }
+
         const creationPromises = (bucketObjects as any).map(async (object: any) => {
           const key = object.Key
           const localContext = _.cloneDeep(context)
@@ -191,10 +258,14 @@ export default async (context: any): Promise<void> => {
         await Promise.all(creationPromises)
 
         console.log('All static-resources created')
+
+        return context
       }
     })
   } else {
     console.log('Regex for ' + url + ' did not match anything known')
+
+    return context
   }
 }
 
