@@ -9,6 +9,7 @@ import GroupUserRank from './group-user-rank/group-user-rank.service'
 import IdentityProviderType from './identity-provider-type/identity-provider-type.service'
 import ResourceType from './resource-type/resource-type.service'
 import StaticResourceType from './static-resource-type/static-resource-type.service'
+import SubscriptionLevel from './subscription-level/subscription-level.service'
 import UserRelationshipType from './user-relationship-type/user-relationship-type.service'
 import UserRole from './user-role/user-role.service'
 
@@ -72,6 +73,7 @@ export default (app: Application): void => {
   app.configure(IdentityProviderType)
   app.configure(AccessControlScope)
   app.configure(GroupUserRank)
+  app.configure(SubscriptionLevel)
 
   // Objects
   app.configure(AccessControl)
