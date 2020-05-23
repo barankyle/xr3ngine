@@ -9,6 +9,7 @@ import GroupUserRank from './group-user-rank/group-user-rank.service'
 import IdentityProviderType from './identity-provider-type/identity-provider-type.service'
 import ResourceType from './resource-type/resource-type.service'
 import StaticResourceType from './static-resource-type/static-resource-type.service'
+import SeatStatus from './seat-status/seat-status.service'
 import UserRelationshipType from './user-relationship-type/user-relationship-type.service'
 import UserRole from './user-role/user-role.service'
 import SubscriptionType from './subscription-type/subscription-type.service'
@@ -26,6 +27,7 @@ import License from './license/license.service'
 import Location from './location/location.service'
 import Party from './party/party.service'
 import Project from './project/project.service'
+import Seat from './seat/seat.service';
 import StaticResource from './static-resource/static-resource.service'
 import User from './user/user.service'
 import UserRelationship from './user-relationship/user-relationship.service'
@@ -74,6 +76,7 @@ export default (app: Application): void => {
   app.configure(EntityType)
   app.configure(UserRelationshipType)
   app.configure(IdentityProviderType)
+  app.configure(SeatStatus)
   app.configure(SubscriptionType)
   app.configure(AccessControlScope)
   app.configure(GroupUserRank)
@@ -90,6 +93,7 @@ export default (app: Application): void => {
   app.configure(License)
   app.configure(Party)
   app.configure(Project)
+  app.configure(Seat);
   app.configure(StaticResource)
   app.configure(User)
   app.configure(UserRelationship)
